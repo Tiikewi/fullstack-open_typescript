@@ -1,5 +1,6 @@
 import patientData from "../../data/patients.json";
 import { PatientEntry } from "../types";
+import { v1 as uuid } from "uuid";
 
 const patients: Omit<PatientEntry, "ssn">[] = patientData;
 console.log("patients:", patients);
@@ -14,8 +15,17 @@ const getEntries = (): Omit<PatientEntry, "ssn">[] => {
   }));
 };
 
-const addPatient = () => {
-  return null;
+const addPatient = (entry: Omit<PatientEntry, "id">): PatientEntry => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const id: string = uuid();
+
+  const newPatient = {
+    id,
+    ...entry,
+  };
+
+  patients.push(newPatient);
+  return newPatient;
 };
 
 export default { getEntries, addPatient };
