@@ -1,31 +1,43 @@
-import patientData from "../../data/patients.json";
-import { NewPatientEntry, PatientEntry } from "../types";
-import { v1 as uuid } from "uuid";
+import { v1 as uuid } from 'uuid'
+import patientData from '../../data/patients'
+import { Patient, NewPatient, PublicPatient, NewEntry, Entry } from '../types'
 
-const patients: Omit<PatientEntry, "ssn">[] = patientData;
-console.log("patients:", patients);
+const patients: Patient[] = patientData;
 
-const getEntries = (): Omit<PatientEntry, "ssn">[] => {
+export const getPatients = (): PublicPatient[] => {
   return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
     name,
     dateOfBirth,
     gender,
-    occupation,
-  }));
-};
+    occupation
+  }))
+}
 
-const addPatient = (entry: NewPatientEntry): PatientEntry => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-  const id: string = uuid();
+export const getPatientById = (id: string): Patient | undefined => {
+  let patient = patients.find((p) => p.id === id)
+  console.log(patient?.entries)
+  return patient
+}
 
-  const newPatient = {
+export const addPatient = (patient: NewPatient): Patient => {
+  const newPatient: Patient = {
+    id: (patients.length + 1).toString(),
+    ...patient,
+  }
+
+  patients.push(newPatient)
+  return newPatient
+}
+
+export const addEntry = (patient: Patient, newEntry: NewEntry): Patient => {
+  const id = uuid()
+
+  const entryToAdd: Entry = {
+    ...newEntry,
     id,
-    ...entry,
-  };
+  }
+  patient.entries.push(entryToAdd)
 
-  patients.push(newPatient);
-  return newPatient;
-};
-
-export default { getEntries, addPatient };
+  return patient
+}
