@@ -197,7 +197,7 @@ export const assertNever = (value: never): never => {
 }
 
 // eslint-disable-next-line  @typescript-eslint/explicit-module-boundary-types
-const toNewPatient = (object: any): NewPatient => {
+export const toNewPatient = (object: any): NewPatient => {
   const newPatient: NewPatient = {
     name: parseName(object.name),
     ssn: parseSsn(object.ssn),
@@ -246,5 +246,3 @@ export const toNewEntry = (newEntry: any): NewEntry => {
       return assertNever(validEntryType)
   }
 }
-
-export default toNewPatient

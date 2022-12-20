@@ -1,6 +1,7 @@
 import express from 'express'
-import { getPatients, getPatientById, addPatient } from '../services/patientService'
-import toNewPatientEntry from '../utils'
+import { getPatients, getPatientById, addPatient, addEntry } from '../services/patientService'
+import { Patient } from '../types'
+import {toNewEntry, toNewPatient} from '../utils'
 
 const router = express.Router()
 
@@ -15,7 +16,7 @@ router.get('/:id', (_req, res) => {
 router.post('/', (req, res) => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const newPatientEntry = toNewPatientEntry(req.body)
+    const newPatientEntry = toNewPatient(req.body)
     const addedEntry = addPatient(newPatientEntry)
     res.json(addedEntry)
   } catch (e: unknown) {
@@ -26,5 +27,20 @@ router.post('/', (req, res) => {
     res.status(400).send(errorMsg)
   }
 })
+
+router.post('/:id/entries', (req, res) => {
+  const { id } = req.params;
+  const patient: Patient | undefined = getPatientById(id);
+  if (!patient) throw new Error("Cannot get patient");
+  try {
+    const newEntry = toNewEntry(req.body);
+    const addedEntry = addEntry(patient, newEntry);
+    res.json(addedEntry);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Undefined error';
+    res.status(400).send(errorMessage);
+  }
+});
+
 
 export default router
